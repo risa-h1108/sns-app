@@ -20,4 +20,16 @@ export const authRepository = {
     if (error) throw new Error(error.message);
     return { ...data.user, userName: data.user.user_metadata.name };
   },
+
+  //起動時にgetCurrentUserを動かし、短期間での再ログインの場合、自動でCurrentUserにデータを入れる
+  async getCurrentUser() {
+    const { data, error } = await supabase.auth.getSession();
+    if (error != null) throw new Error(error.message);
+    if (data.session == null) return; //data.sessionがnullならreturnを返す
+
+    return {
+      ...data.session.user,
+      userName: data.session.user.user_metadata.name,
+    };
+  },
 };
