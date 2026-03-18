@@ -1,5 +1,4 @@
 import { supabase } from "../lib/supabase";
-import Signin from "../pages/Signin";
 
 export const authRepository = {
   async signup(name, email, password) {
