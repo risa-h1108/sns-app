@@ -1,10 +1,18 @@
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { Navigate } from "react-router-dom";
 import { SessionContext } from "../SessionProvider";
 import { SideMenu } from "../components/SideMenu";
+import { postRepository } from "../repositories/post";
 
 function Home() {
-  const { currentUser, setCurrentUser } = useContext(SessionContext);
+  const [content, setContent] = useState("");
+  const { currentUser } = useContext(SessionContext);
+
+  const createPost = async () => {
+    const post = await postRepository.create(content, currentUser.id);
+    console.log(post);
+    setContent(""); //投稿後はリセットするため、空白値にする
+  };
 
   //currentUserがない（null）ならば、signinへ（ログインするよう）遷移する
   if (currentUser == null) return <Navigate replace to="/signin" />;
@@ -24,8 +32,14 @@ function Home() {
               <textarea
                 className="w-full p-2 mb-4 border-2 border-gray-200 rounded-md"
                 placeholder="What's on your mind?"
+                onChange={(e) => setContent(e.target.value)}
+                value={content} //contentのデータはonChangeのsetContentに渡され、ブラウザ上ではcontentは空になる（＝投稿後の文章リセット機能）
               />
-              <button className="bg-[#34D399] text-white px-4 py-2 rounded-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-600 focus:ring-opacity-50 disabled:opacity-50 disabled:cursor-not-allowed">
+              <button
+                className="bg-[#34D399] text-white px-4 py-2 rounded-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-600 focus:ring-opacity-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                onClick={createPost}
+                disabled={content === ""} //空白での投稿は無効
+              >
                 Post
               </button>
             </div>
