@@ -1,3 +1,5 @@
+import { supabase } from "../lib/supabase";
+
 export const postRepository = {
   async create(content, userId) {
     const { data, error } = await supabase
