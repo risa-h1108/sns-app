@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Navigate } from "react-router-dom";
 import { SessionContext } from "../SessionProvider";
 import { SideMenu } from "../components/SideMenu";
@@ -6,12 +6,24 @@ import { postRepository } from "../repositories/post";
 
 function Home() {
   const [content, setContent] = useState("");
+  const [posts, setPosts] = useState([]);
   const { currentUser } = useContext(SessionContext);
+
+  //ページが表示した時にfetchPostsで定義したsupabase内のpostを取得する
+  useEffect(() => {
+    fetchPosts();
+  }, []);
 
   const createPost = async () => {
     const post = await postRepository.create(content, currentUser.id);
     console.log(post);
     setContent(""); //投稿後はリセットするため、空白値にする
+  };
+
+  //supabaseのpostsをStateに入れて、変動させる
+  const fetchPosts = async () => {
+    const posts = await postRepository.find();
+    setPosts(posts);
   };
 
   //currentUserがない（null）ならば、signinへ（ログインするよう）遷移する
