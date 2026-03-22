@@ -3,6 +3,7 @@ import { Navigate } from "react-router-dom";
 import { SessionContext } from "../SessionProvider";
 import { SideMenu } from "../components/SideMenu";
 import { postRepository } from "../repositories/post";
+import { Post } from "../components/Post";
 
 function Home() {
   const [content, setContent] = useState("");
@@ -16,7 +17,12 @@ function Home() {
 
   const createPost = async () => {
     const post = await postRepository.create(content, currentUser.id);
-    console.log(post);
+    //投稿データをsetPostsに渡すと、リアルタイムで投稿データが反映される
+    setPosts([
+      //userId,userNameの情報を含めた「今作成した投稿」のこと、先頭に表示
+      { ...post, userId: currentUser.id, userName: currentUser.userName },
+      ...posts, //以前から表示済みの投稿のこと
+    ]);
     setContent(""); //投稿後はリセットするため、空白値にする
   };
 
@@ -55,7 +61,11 @@ function Home() {
                 Post
               </button>
             </div>
-            <div className="mt-4"></div>
+            <div className="mt-4">
+              {posts.map((post) => (
+                <Post key={post.id} post={post} />
+              ))}
+            </div>
           </div>
           <SideMenu />
         </div>
