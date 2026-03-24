@@ -1,10 +1,36 @@
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Navigate } from "react-router-dom";
 import { SessionContext } from "../SessionProvider";
 import { SideMenu } from "../components/SideMenu";
+import { postRepository } from "../repositories/post";
+import { Post } from "../components/Post";
 
 function Home() {
-  const { currentUser, setCurrentUser } = useContext(SessionContext);
+  const [content, setContent] = useState("");
+  const [posts, setPosts] = useState([]);
+  const { currentUser } = useContext(SessionContext);
+
+  //ページが表示した時にfetchPostsで定義したsupabase内のpostを取得する
+  useEffect(() => {
+    fetchPosts();
+  }, []);
+
+  const createPost = async () => {
+    const post = await postRepository.create(content, currentUser.id);
+    //投稿データをsetPostsに渡すと、リアルタイムで投稿データが反映される
+    setPosts([
+      //userId,userNameの情報を含めた「今作成した投稿」のこと、先頭に表示
+      { ...post, userId: currentUser.id, userName: currentUser.userName },
+      ...posts, //以前から表示済みの投稿のこと
+    ]);
+    setContent(""); //投稿後はリセットするため、空白値にする
+  };
+
+  //supabaseのpostsをStateに入れて、変動させる
+  const fetchPosts = async () => {
+    const posts = await postRepository.find();
+    setPosts(posts);
+  };
 
   //currentUserがない（null）ならば、signinへ（ログインするよう）遷移する
   if (currentUser == null) return <Navigate replace to="/signin" />;
@@ -24,12 +50,22 @@ function Home() {
               <textarea
                 className="w-full p-2 mb-4 border-2 border-gray-200 rounded-md"
                 placeholder="What's on your mind?"
+                onChange={(e) => setContent(e.target.value)}
+                value={content} //contentのデータはonChangeのsetContentに渡され、ブラウザ上ではcontentは空になる（＝投稿後の文章リセット機能）
               />
-              <button className="bg-[#34D399] text-white px-4 py-2 rounded-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-600 focus:ring-opacity-50 disabled:opacity-50 disabled:cursor-not-allowed">
+              <button
+                className="bg-[#34D399] text-white px-4 py-2 rounded-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-600 focus:ring-opacity-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                onClick={createPost}
+                disabled={content === ""} //空白での投稿は無効
+              >
                 Post
               </button>
             </div>
-            <div className="mt-4"></div>
+            <div className="mt-4">
+              {posts.map((post) => (
+                <Post key={post.id} post={post} />
+              ))}
+            </div>
           </div>
           <SideMenu />
         </div>
