@@ -4,6 +4,7 @@ import { SessionContext } from "../SessionProvider";
 import { SideMenu } from "../components/SideMenu";
 import { postRepository } from "../repositories/post";
 import { Post } from "../components/Post";
+import { Pagination } from "../components/Pagination";
 
 function Home() {
   const [content, setContent] = useState("");
@@ -66,6 +67,7 @@ function Home() {
                 <Post key={post.id} post={post} />
               ))}
             </div>
+            <Pagination />
           </div>
           <SideMenu />
         </div>
