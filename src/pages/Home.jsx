@@ -6,9 +6,12 @@ import { postRepository } from "../repositories/post";
 import { Post } from "../components/Post";
 import { Pagination } from "../components/Pagination";
 
+const limit = 5;
+
 function Home() {
   const [content, setContent] = useState("");
   const [posts, setPosts] = useState([]);
+  const [page, setPage] = useState(1);
   const { currentUser } = useContext(SessionContext);
 
   //ページが表示した時にfetchPostsで定義したsupabase内のpostを取得する
@@ -28,9 +31,21 @@ function Home() {
   };
 
   //supabaseのpostsをStateに入れて、変動させる
-  const fetchPosts = async () => {
-    const posts = await postRepository.find();
+  const fetchPosts = async (page) => {
+    const posts = await postRepository.find(page, limit);
     setPosts(posts);
+  };
+
+  const moveToNext = async () => {
+    const nextPage = page + 1;
+    await fetchPosts(nextPage);
+    setPage(nextPage);
+  };
+
+  const moveToPrev = async () => {
+    const prevPage = page - 1;
+    await fetchPosts(prevPage);
+    setPage(prevPage);
   };
 
   //currentUserがない（null）ならば、signinへ（ログインするよう）遷移する
@@ -67,7 +82,7 @@ function Home() {
                 <Post key={post.id} post={post} />
               ))}
             </div>
-            <Pagination />
+            <Pagination onPrev={moveToPrev} onNext={moveToNext} />
           </div>
           <SideMenu />
         </div>
