@@ -82,7 +82,13 @@ function Home() {
                 <Post key={post.id} post={post} />
               ))}
             </div>
-            <Pagination onPrev={moveToPrev} onNext={moveToNext} />
+            <Pagination
+              //pageが1より大きい場合、moveToPrevを動作させ、1ページ前に戻る。1より小さい場合、nullを渡す
+              onPrev={page > 1 ? moveToPrev : null}
+              //取得したpostsの数がlimit(表示の最大数)より大きい場合、moveToNextを動作させ、次のページに遷移。
+              // 小さい場合は[次のページはない]という判断になり、nullを渡す
+              onNext={posts.length >= limit ? moveToNext : null}
+            />
           </div>
           <SideMenu />
         </div>
