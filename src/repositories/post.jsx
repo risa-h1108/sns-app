@@ -35,4 +35,13 @@ export const postRepository = {
       };
     });
   },
+  //delete(id)とeq("id", id)の2個目のidと一致するpostを削除する処理
+  async delete(id) {
+    //eq=「イコール」のこと
+    const { error } = await supabase.from("posts").delete().eq("id", id);
+
+    if (error != null) throw new Error(error.message);
+
+    return true; //削除処理が上手く行ったら,trueを返す
+  },
 };
