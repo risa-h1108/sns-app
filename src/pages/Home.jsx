@@ -48,6 +48,13 @@ function Home() {
     setPage(prevPage);
   };
 
+  const deletePost = async (postId) => {
+    await postRepository.delete(postId); //supabase側の処理
+    //↓supabase側でdeleteされたpostIdと一致しないpost.idのpostだけを抽出して(＝filterメゾット)
+    // Stateにセットし直す(＝setPosts)　＝リアルタイムで削除行為を反映
+    setPosts(posts.filter((post) => post.id !== postId));
+  };
+
   //currentUserがない（null）ならば、signinへ（ログインするよう）遷移する
   if (currentUser == null) return <Navigate replace to="/signin" />;
 
@@ -79,7 +86,7 @@ function Home() {
             </div>
             <div className="mt-4">
               {posts.map((post) => (
-                <Post key={post.id} post={post} />
+                <Post key={post.id} post={post} onDelete={deletePost} />
               ))}
             </div>
             <Pagination
