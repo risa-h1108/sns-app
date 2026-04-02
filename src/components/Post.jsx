@@ -11,7 +11,7 @@ export function Post(props) {
 
       {currentUser.id === props.post.userId && (
         <button
-          onClick={() => props.onDelete(props.post.id)} //削除したいpost.idを渡し、削除ボタンを押したら
+          onClick={() => props.onDelete(props.post.id)} //削除したいpost.idを渡し、削除ボタンを押したら削除される
           className="text-blue-500 hover:underline cursor-pointer focus:outline-none"
         >
           削除
