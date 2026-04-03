@@ -10,7 +10,10 @@ export function Post(props) {
       <p className="text-gray-700">{props.post.content}</p>
 
       {currentUser.id === props.post.userId && (
-        <button className="text-blue-500 hover:underline cursor-pointer focus:outline-none">
+        <button
+          onClick={() => props.onDelete(props.post.id)} //削除したいpost.idを渡し、削除ボタンを押したら削除される
+          className="text-blue-500 hover:underline cursor-pointer focus:outline-none"
+        >
           削除
         </button> //ログイン中のユーザーidと投稿したuserIdが同じなら、削除ボタンを表示
       )}

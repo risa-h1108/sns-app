@@ -10,6 +10,16 @@ export const authRepository = {
     });
     // if (error != null) :errorがnullではない（＝エラーが存在する）場合
     if (error != null) throw new Error(error.message);
+
+    //supabase上のusersテーブルにuser.id,nameを保存
+    const user = data.user;
+    await supabase.from("users").insert([
+      {
+        id: user.id,
+        name: name,
+      },
+    ]);
+
     return { ...data.user, userName: data.user.user_metadata.name };
   },
   async signin(email, password) {
@@ -31,5 +41,11 @@ export const authRepository = {
       ...data.session.user,
       userName: data.session.user.user_metadata.name,
     };
+  },
+
+  async signout() {
+    const { error } = await supabase.auth.signOut();
+    if (error != null) throw new Error(error.message);
+    return true;
   },
 };

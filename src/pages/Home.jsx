@@ -4,11 +4,16 @@ import { SessionContext } from "../SessionProvider";
 import { SideMenu } from "../components/SideMenu";
 import { postRepository } from "../repositories/post";
 import { Post } from "../components/Post";
+import { Pagination } from "../components/Pagination";
+import { authRepository } from "../repositories/auth";
+
+const limit = 5;
 
 function Home() {
   const [content, setContent] = useState("");
   const [posts, setPosts] = useState([]);
-  const { currentUser } = useContext(SessionContext);
+  const [page, setPage] = useState(1);
+  const { currentUser, setCurrentUser } = useContext(SessionContext);
 
   //ページが表示した時にfetchPostsで定義したsupabase内のpostを取得する
   useEffect(() => {
@@ -27,9 +32,33 @@ function Home() {
   };
 
   //supabaseのpostsをStateに入れて、変動させる
-  const fetchPosts = async () => {
-    const posts = await postRepository.find();
+  const fetchPosts = async (page) => {
+    const posts = await postRepository.find(page, limit);
     setPosts(posts);
+  };
+
+  const moveToNext = async () => {
+    const nextPage = page + 1;
+    await fetchPosts(nextPage);
+    setPage(nextPage);
+  };
+
+  const moveToPrev = async () => {
+    const prevPage = page - 1;
+    await fetchPosts(prevPage);
+    setPage(prevPage);
+  };
+
+  const deletePost = async (postId) => {
+    await postRepository.delete(postId); //supabase側の処理
+    //↓supabase側でdeleteされたpostIdと一致しないpost.idのpostだけを抽出して(＝filterメゾット)
+    // Stateにセットし直す(＝setPosts)　＝リアルタイムで削除行為を反映
+    setPosts(posts.filter((post) => post.id !== postId));
+  };
+
+  const signout = async () => {
+    await authRepository.signout();
+    setCurrentUser(null); //ログアウト機能だから、nullを渡す
   };
 
   //currentUserがない（null）ならば、signinへ（ログインするよう）遷移する
@@ -40,7 +69,9 @@ function Home() {
       <header className="bg-[#34D399] p-4">
         <div className="container mx-auto flex items-center justify-between">
           <h1 className="text-3xl font-bold text-white">SNS APP</h1>
-          <button className="text-white hover:text-red-600">ログアウト</button>
+          <button className="text-white hover:text-red-600" onClick={signout}>
+            ログアウト
+          </button>
         </div>
       </header>
       <div className="container mx-auto mt-6 p-4">
@@ -63,9 +94,16 @@ function Home() {
             </div>
             <div className="mt-4">
               {posts.map((post) => (
-                <Post key={post.id} post={post} />
+                <Post key={post.id} post={post} onDelete={deletePost} />
               ))}
             </div>
+            <Pagination
+              //pageが1より大きい場合、moveToPrevを動作させ、1ページ前に戻る。1より小さい場合、nullを渡す
+              onPrev={page > 1 ? moveToPrev : null}
+              //取得したpostsの数がlimit(表示の最大数)より大きい場合、moveToNextを動作させ、次のページに遷移。
+              // 小さい場合は[次のページはない]という判断になり、nullを渡す
+              onNext={posts.length >= limit ? moveToNext : null}
+            />
           </div>
           <SideMenu />
         </div>

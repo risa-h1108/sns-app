@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { authRepository } from "../repositories/auth";
 import { Navigate } from "react-router-dom";
+import { SessionContext } from "../SessionProvider";
 
 function Signup() {
   const [name, setName] = useState("");
