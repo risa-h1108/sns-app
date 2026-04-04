@@ -13,6 +13,8 @@ export function SideMenu() {
       <p>
         <strong>Email:</strong> {currentUser.email}
       </p>
+
+      <p>投稿の検索</p>
     </div>
   );
 }
