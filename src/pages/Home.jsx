@@ -6,6 +6,7 @@ import { postRepository } from "../repositories/post";
 import { Post } from "../components/Post";
 import { Pagination } from "../components/Pagination";
 import { authRepository } from "../repositories/auth";
+import { PostedSearch } from "../components/PostedSearch";
 
 const limit = 5;
 
@@ -106,6 +107,7 @@ function Home() {
             />
           </div>
           <SideMenu />
+          <PostedSearch />
         </div>
       </div>
     </div>
