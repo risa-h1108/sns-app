@@ -76,8 +76,10 @@ function Home() {
         </div>
       </header>
       <div className="container mx-auto mt-6 p-4">
-        <div className="grid grid-cols-3 gap-4">
-          <div className="col-span-2">
+        {/*親(左右に影響を与えるCSS)：flexで左右カラムを横並び*/}
+        <div className=" gap-6 flex">
+          {/*左側カラムに適応するCSS*/}
+          <div className="w-2/3 col-span-2">
             <div className="bg-white p-4 rounded-lg shadow-md">
               <textarea
                 className="w-full p-2 mb-4 border-2 border-gray-200 rounded-md"
@@ -98,6 +100,7 @@ function Home() {
                 <Post key={post.id} post={post} onDelete={deletePost} />
               ))}
             </div>
+
             <Pagination
               //pageが1より大きい場合、moveToPrevを動作させ、1ページ前に戻る。1より小さい場合、nullを渡す
               onPrev={page > 1 ? moveToPrev : null}
@@ -106,8 +109,12 @@ function Home() {
               onNext={posts.length >= limit ? moveToNext : null}
             />
           </div>
-          <SideMenu />
-          <PostedSearch />
+
+          {/*右側カラムに適応するCSS*/}
+          <div className="w-1/3 flex flex-col gap-4">
+            <SideMenu />
+            <PostedSearch />
+          </div>
         </div>
       </div>
     </div>
