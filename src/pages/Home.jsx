@@ -15,6 +15,8 @@ function Home() {
   const [posts, setPosts] = useState([]);
   const [page, setPage] = useState(1);
   const { currentUser, setCurrentUser } = useContext(SessionContext);
+  const [keyword, setKeyword] = useState("");
+  const [searchedPost, setSearchedPost] = useState();
 
   //ページが表示した時にfetchPostsで定義したsupabase内のpostを取得する
   useEffect(() => {
@@ -60,6 +62,10 @@ function Home() {
   const signout = async () => {
     await authRepository.signout();
     setCurrentUser(null); //ログアウト機能だから、nullを渡す
+  };
+
+  const handleInputChange = (e) => {
+    setKeyword(e.target.value);
   };
 
   //currentUserがない（null）ならば、signinへ（ログインするよう）遷移する
@@ -113,7 +119,7 @@ function Home() {
           {/*右側カラムに適応するCSS*/}
           <div className="w-1/3 flex flex-col gap-4">
             <SideMenu />
-            <PostedSearch />
+            <PostedSearch onInputChange={handleInputChange} />
           </div>
         </div>
       </div>
