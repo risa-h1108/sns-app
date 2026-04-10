@@ -73,6 +73,7 @@ function Home() {
 
   return (
     <div className="min-h-screen bg-gray-100">
+      {/*ヘッダー部分 */}
       <header className="bg-[#34D399] p-4">
         <div className="container mx-auto flex items-center justify-between">
           <h1 className="text-3xl font-bold text-white">SNS APP</h1>
@@ -81,6 +82,7 @@ function Home() {
           </button>
         </div>
       </header>
+
       <div className="container mx-auto mt-6 p-4">
         {/*親(左右に影響を与えるCSS)：flexで左右カラムを横並び*/}
         <div className=" gap-6 flex">
