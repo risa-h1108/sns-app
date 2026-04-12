@@ -12,6 +12,7 @@ export function PostedSearch(props) {
 
         <div className="flex">
           <input
+            onChange={props.onInputChange}
             type="text"
             id={postId}
             //枠線の色を表示させる時：border単体が必要、
@@ -19,7 +20,10 @@ export function PostedSearch(props) {
             className="border border-gray-200 w-2/3 p-2 rounded-l-lg focus:border-gray-400 focus:outline-none"
             placeholder="探したい投稿を入力してください"
           />
-          <button className="bg-[#34D399] hover:bg-green-600 text-white font-bold py-2 px-4 rounded-r-lg">
+          <button
+            onClick={props.onSubmit}
+            className="bg-[#34D399] hover:bg-green-600 text-white font-bold py-2 px-4 rounded-r-lg"
+          >
             <FontAwesomeIcon icon={faSearch} />
           </button>
         </div>

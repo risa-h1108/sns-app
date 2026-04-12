@@ -17,6 +17,7 @@ function Home() {
   const { currentUser, setCurrentUser } = useContext(SessionContext);
   const [keyword, setKeyword] = useState("");
   const [searchedPost, setSearchedPost] = useState();
+  const [isLoading, setIsLoading] = useState();
 
   //ページが表示した時にfetchPostsで定義したsupabase内のpostを取得する
   useEffect(() => {
@@ -64,8 +65,17 @@ function Home() {
     setCurrentUser(null); //ログアウト機能だから、nullを渡す
   };
 
+  //検索時の入力した文字をキーワードとしてsetKeywordに渡す
   const handleInputChange = (e) => {
     setKeyword(e.target.value);
+  };
+
+  //検索処理
+  const searchPosts = async () => {
+    setIsLoading(true);
+    const result = await searchPosts(keyword);
+    setSearchedPost(result.items);
+    setIsLoading(false);
   };
 
   //currentUserがない（null）ならば、signinへ（ログインするよう）遷移する
@@ -121,7 +131,10 @@ function Home() {
           {/*右側カラムに適応するCSS*/}
           <div className="w-1/3 flex flex-col gap-4">
             <SideMenu />
-            <PostedSearch onInputChange={handleInputChange} />
+            <PostedSearch
+              onInputChange={handleInputChange}
+              onSubmit={searchPosts}
+            />
           </div>
         </div>
       </div>
